@@ -15,13 +15,14 @@ set.seed(1)
 
 ```{r}
 landsat_f = list.files("Landast_crop/", pattern = "\\.TIF$", full.names = TRUE)
-landsat_f = landsat_f[-1]
+landsat_f = landsat_f[-1] # remove panchromatic band (15 m)
 landsat = rast(landsat_f)
 names(landsat) = paste0("B", 1:7)
 landsat
 ```
 
 ```{r warning=FALSE}
+# scale data to reflectance
 landsat = landsat * 2.75e-05 - 0.2
 summary(landsat)
 ```
@@ -52,7 +53,6 @@ plot(validation, main = "Validation dataset", col = colors)
 ```
 
 ```{r}
-# EPSG: 2180
 submission = read.csv("submission.csv")
 submission = vect(submission, geom = c("X", "Y"), crs = "EPSG:2180")
 submission = project(submission, crs(landsat))
@@ -84,6 +84,11 @@ mdl = ranger(category ~ ., data = train_smp, importance = "impurity")
 ```
 
 ```{r}
+barplot(sort(importance(mdl)), xlab = "Spectral band",
+        main = "Variable importance")
+```
+
+```{r collapse=TRUE}
 validation_pr = predict(mdl, validation_smp[, -1])$predictions
 
 # accuracy is over optimistic (don't use this)
@@ -96,7 +101,7 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 kap_vec(validation_smp$category, validation_pr)
 ```
 
-```{r}
+```{r results="hide"}
 landsat_pr = crop(landsat, ext(submission))
 landsat_pr = predict(landsat_pr, mdl, index = 1, na.rm = TRUE, cores = 1)
 ```
