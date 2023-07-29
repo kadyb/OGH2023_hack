@@ -17,3 +17,5 @@
 6. Post-processing:
     * Modal filter
     * Sieve filter
+
+It is recommended to use a machine learning framework, e.g. [tidymodels](https://www.tidymodels.org/), [mlr3](https://mlr3.mlr-org.com/) or [scikit-learn](https://scikit-learn.org/).
