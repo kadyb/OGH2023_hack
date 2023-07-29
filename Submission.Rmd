@@ -1,0 +1,112 @@
+---
+title: "R Notebook"
+author: "Krzysztof Dyba"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r message=FALSE}
+library("terra")
+library("ranger") # Random Forest model
+library("yardstick") # validation metrics
+set.seed(1)
+```
+
+```{r}
+landsat_f = list.files("Landast_crop/", pattern = "\\.TIF$", full.names = TRUE)
+landsat_f = landsat_f[-1]
+landsat = rast(landsat_f)
+names(landsat) = paste0("B", 1:7)
+landsat
+```
+
+```{r warning=FALSE}
+landsat = landsat * 2.75e-05 - 0.2
+summary(landsat)
+```
+
+```{r}
+plotRGB(landsat, r = 4, g = 3, b = 2, stretch = "lin")
+```
+
+```{r}
+training_f = "training_set.tif"
+training = rast(training_f)
+training
+```
+
+```{r}
+colors = c("#1445f9", "#d20000", "#29a329", "#fdd327", "#d9d9d9")
+plot(training, main = "Training dataset", col = colors)
+```
+
+```{r}
+validation_f = "validation_set.tif"
+validation = rast(validation_f)
+validation
+```
+
+```{r}
+plot(validation, main = "Validation dataset", col = colors)
+```
+
+```{r}
+# EPSG: 2180
+submission = read.csv("submission.csv")
+submission = vect(submission, geom = c("X", "Y"), crs = "EPSG:2180")
+submission = project(submission, crs(landsat))
+```
+
+```{r}
+train_smp = spatSample(training, size = 20000, method = "random",
+                       as.points = TRUE, values = FALSE, na.rm = TRUE)
+x = extract(training, train_smp, ID = FALSE)
+y = extract(landsat, project(train_smp, crs(landsat)), ID = FALSE)
+train_smp = cbind(x, y)
+```
+
+```{r}
+prop.table(table(train_smp$category)) * 100
+```
+
+```{r}
+validation_smp = spatSample(validation, size = 20000, method = "random",
+                            as.points = TRUE, values = FALSE, na.rm = TRUE)
+x = extract(validation, validation_smp, ID = FALSE)
+y = extract(landsat, project(validation_smp, crs(landsat)), ID = FALSE)
+validation_smp = cbind(x, y)
+rm(x, y) # remove unnecessary variables
+```
+
+```{r}
+mdl = ranger(category ~ ., data = train_smp, importance = "impurity")
+```
+
+```{r}
+validation_pr = predict(mdl, validation_smp[, -1])$predictions
+
+# accuracy is over optimistic (don't use this)
+accuracy_vec(validation_smp$category, validation_pr)
+
+# balanced accuracy
+bal_accuracy_vec(validation_smp$category, validation_pr)
+
+# Cohen's kappa
+kap_vec(validation_smp$category, validation_pr)
+```
+
+```{r}
+landsat_pr = crop(landsat, ext(submission))
+landsat_pr = predict(landsat_pr, mdl, index = 1, na.rm = TRUE, cores = 1)
+```
+
+```{r}
+levels(landsat_pr) = levels(training)
+plot(landsat_pr, main = "Prediction", col = colors)
+```
+
+```{r}
+pts_pr = extract(landsat_pr, submission, ID = FALSE)
+write.csv(pts_pr, "test_submission.csv", row.names = FALSE)
+```
