@@ -14,3 +14,6 @@
    * Normalized digital surface model (nDSM)
    * Panchromatic band (15 m)
    * Satellite scene from another date
+6. Post-processing:
+    * Modal filter
+    * Sieve filter
