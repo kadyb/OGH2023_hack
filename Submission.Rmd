@@ -101,6 +101,11 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 kap_vec(validation_smp$category, validation_pr)
 ```
 
+```{r}
+# confusion matrix
+table(prediction = validation_pr, true = validation_smp$category)
+```
+
 ```{r results="hide"}
 landsat_pr = crop(landsat, ext(submission))
 landsat_pr = predict(landsat_pr, mdl, index = 1, na.rm = TRUE, cores = 1)

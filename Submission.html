@@ -1730,6 +1730,15 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 # Cohen&#39;s kappa
 kap_vec(validation_smp$category, validation_pr)
 ## [1] 0.7391059</code></pre>
+<pre class="r"><code># confusion matrix
+table(prediction = validation_pr, true = validation_smp$category)</code></pre>
+<pre><code>##              true
+## prediction    water buildings vegetation cropland undeveloped
+##   water         358         1         52       15           0
+##   buildings       3        80         36       22          17
+##   vegetation    148        66       6965     1195          44
+##   cropland       40       245        780     9824          88
+##   undeveloped     0        13          1        4           3</code></pre>
 <pre class="r"><code>landsat_pr = crop(landsat, ext(submission))
 landsat_pr = predict(landsat_pr, mdl, index = 1, na.rm = TRUE, cores = 1)</code></pre>
 <pre class="r"><code>levels(landsat_pr) = levels(training)
