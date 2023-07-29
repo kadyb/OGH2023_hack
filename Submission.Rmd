@@ -87,8 +87,11 @@ validation
 plot(validation, main = "Validation dataset", col = colors)
 ```
 
-Note that satellite data (EPSG:32634) and land cover data (EPSG:2180) have
-different coordinate reference systems.
+Note two things:
+
+1. The satellite data (EPSG:32634) and land cover data (EPSG:2180) have
+different coordinate reference systems (CRS).
+2. The rasters are not aligned (the pixels are slightly shifted).
 
 In the last step, we load the csv file for which we have to make a prediction
 and finally submit the results. For this purpose, we can use the `read.csv()`
@@ -103,7 +106,8 @@ The first two columns contain the geographical coordinates of points in the
 EPSG:2180 (longitude and latitude). The third column `category` is empty and
 we have to indicate what land cover category is there.
 
-xxxxxx
+Then let's convert the data frame to a vector (SpatVector) and reproject
+the coordinate reference systems to EPSG:32634.
 
 ```{r}
 submission = vect(submission, geom = c("X", "Y"), crs = "EPSG:2180")
@@ -112,17 +116,38 @@ submission = project(submission, crs(landsat))
 
 ## Model training
 
+To train the model, we do not have to use all available data (pixels), we can
+use a random sample, which will significantly speed up training.
+The `spatSample()` function is used to draw the sample and can be done as follows.
+
 ```{r}
 train_smp = spatSample(training, size = 20000, method = "random",
                        as.points = TRUE, values = FALSE, na.rm = TRUE)
+```
+
+We have already sample the points (coordinates), now we need to obtain the
+values of spectral bands (`landsat`) and land cover categories (`training`
+and `validation`). The `extract()` function is used to extract pixel values.
+Remember that the objects must have identical CRS.
+
+```{r}
 x = extract(training, train_smp, ID = FALSE)
 y = extract(landsat, project(train_smp, crs(landsat)), ID = FALSE)
-train_smp = cbind(x, y)
+train_smp = cbind(x, y) # combine columns
 ```
+
+Let's check what the data distribution looks like using the `table()` and 
+`prop.table()` functions.
 
 ```{r}
 prop.table(table(train_smp$category)) * 100
 ```
+
+As we can see, our dataset is strongly unbalanced, i.e. the most pixels
+represent `cropland` and `vegetation`, and the other categories appear very
+rarely.
+
+We can use the same functions to create a validation dataset.
 
 ```{r}
 validation_smp = spatSample(validation, size = 20000, method = "random",
@@ -132,6 +157,8 @@ y = extract(landsat, project(validation_smp, crs(landsat)), ID = FALSE)
 validation_smp = cbind(x, y)
 rm(x, y) # remove unnecessary variables
 ```
+
+XXXXXXXXXXXXXXXXXXXXX
 
 ```{r}
 mdl = ranger(category ~ ., data = train_smp, importance = "impurity")
