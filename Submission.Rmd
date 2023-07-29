@@ -1,35 +1,60 @@
 ---
-title: "R Notebook"
+title: "Automatic land cover mapping"
 author: "Krzysztof Dyba"
+date: "28 August 2023"
 output:
   html_document:
     df_print: paged
 ---
 
+## Data loading
+
 ```{r message=FALSE}
 library("terra")
 library("ranger") # Random Forest model
 library("yardstick") # validation metrics
-set.seed(1)
+set.seed(1) # define seed of randomness
 ```
+
+Let's start by listing the rasters to be loaded from the `Landast_crop` folder.
+We also need to define the file extension `pattern = "\\.TIF$"` and full paths
+`full.names = TRUE` in `list.files()` function. Then we load these files using
+the `rast()` function.
 
 ```{r}
 landsat_f = list.files("Landast_crop/", pattern = "\\.TIF$", full.names = TRUE)
 landsat_f = landsat_f[-1] # remove panchromatic band (15 m)
 landsat = rast(landsat_f)
-names(landsat) = paste0("B", 1:7)
+```
+
+For ease of use, we can abbreviate the band names.
+
+```{r}
+names(landsat) = paste0("B", 1:7) # change band names
 landsat
 ```
+
+Next, we need to scale the values to the spectral reflectance. Basically,
+we change the datatype from integer to float. Note that there are outliers
+(below 0 and above 1) in this dataset.
 
 ```{r warning=FALSE}
 # scale data to reflectance
 landsat = landsat * 2.75e-05 - 0.2
-summary(landsat)
+summary(landsat) # print statistics
 ```
+
+We can also display RGB composition using the `plotRGB()` function. We need to
+properly define the spectral bands and it is worth to improve the contrast
+using the `stretch` argument.
 
 ```{r}
 plotRGB(landsat, r = 4, g = 3, b = 2, stretch = "lin")
 ```
+
+Now let's load our reference data with land cover categories. We have two
+datasets -- a training (to train the classification model) and a validation
+(to independently evaluate its performance).
 
 ```{r}
 training_f = "training_set.tif"
@@ -37,10 +62,20 @@ training = rast(training_f)
 training
 ```
 
+Using the `levels()` function we can see what categories occur in the area.
+
+```{r}
+levels(training)[[1]]
+```
+
+We can also display a map.
+
 ```{r}
 colors = c("#1445f9", "#d20000", "#29a329", "#fdd327", "#d9d9d9")
 plot(training, main = "Training dataset", col = colors)
 ```
+
+We can load the validation data in exactly the same way.
 
 ```{r}
 validation_f = "validation_set.tif"
@@ -52,11 +87,30 @@ validation
 plot(validation, main = "Validation dataset", col = colors)
 ```
 
+Note that satellite data (EPSG:32634) and land cover data (EPSG:2180) have
+different coordinate reference systems.
+
+In the last step, we load the csv file for which we have to make a prediction
+and finally submit the results. For this purpose, we can use the `read.csv()`
+function.
+
 ```{r}
 submission = read.csv("submission.csv")
+head(submission)
+```
+
+The first two columns contain the geographical coordinates of points in the
+EPSG:2180 (longitude and latitude). The third column `category` is empty and
+we have to indicate what land cover category is there.
+
+xxxxxx
+
+```{r}
 submission = vect(submission, geom = c("X", "Y"), crs = "EPSG:2180")
 submission = project(submission, crs(landsat))
 ```
+
+## Model training
 
 ```{r}
 train_smp = spatSample(training, size = 20000, method = "random",
@@ -88,6 +142,8 @@ barplot(sort(importance(mdl)), xlab = "Spectral band",
         main = "Variable importance")
 ```
 
+## Model evaluation
+
 ```{r collapse=TRUE}
 validation_pr = predict(mdl, validation_smp[, -1])$predictions
 
@@ -105,6 +161,8 @@ kap_vec(validation_smp$category, validation_pr)
 # confusion matrix
 table(prediction = validation_pr, true = validation_smp$category)
 ```
+
+## Predict
 
 ```{r results="hide"}
 landsat_pr = crop(landsat, ext(submission))
