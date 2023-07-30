@@ -10,3 +10,4 @@
 
 1. Upload datasets Google Drive and Zenodo
 2. Create competition on kaggle
+3. Make short presentation
