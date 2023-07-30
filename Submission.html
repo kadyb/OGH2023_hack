@@ -1510,8 +1510,9 @@ set.seed(1) # define seed of randomness</code></pre>
 <p>Let’s start by listing the rasters to be loaded from the
 <code>Landast_crop</code> folder. We also need to define the file
 extension <code>pattern = &quot;\\.TIF$&quot;</code> and full paths
-<code>full.names = TRUE</code> in <code>list.files()</code> function.
-Then we load these files using the <code>rast()</code> function.</p>
+<code>full.names = TRUE</code> in the <code>list.files()</code>
+function. Then we load these files using the <code>rast()</code>
+function.</p>
 <pre class="r"><code>landsat_f = list.files(&quot;Landast_crop/&quot;, pattern = &quot;\\.TIF$&quot;, full.names = TRUE)
 landsat_f = landsat_f[-1] # remove panchromatic band (15 m)
 landsat = rast(landsat_f)</code></pre>
@@ -1695,7 +1696,7 @@ head(validation_pr)</code></pre>
 more than a <a href="https://en.wikipedia.org/wiki/Precision_and_recall">dozen</a> of
 them. The simplest is accuracy, which is the ratio of correct
 classifications to all classifications (correct and incorrect), but in
-our case it will <a href="https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data">unreliable</a>
+our case it will be <a href="https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data">unreliable</a>
 because our dataset is unbalanced. A better alternative would be
 balanced accuracy or <a href="https://en.wikipedia.org/wiki/Cohen%27s_kappa">Cohen’s
 kappa</a>.</p>
@@ -1710,7 +1711,7 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 # Cohen&#39;s kappa
 kap_vec(validation_smp$category, validation_pr)
 ## [1] 0.7391059</code></pre>
-<p>Moreover, we can do a more thorough analysis using <a href="https://en.wikipedia.org/wiki/Confusion_matrix">confusion
+<p>Moreover, we can do a more thorough analysis using the <a href="https://en.wikipedia.org/wiki/Confusion_matrix">confusion
 matrix</a> and see which classes are correctly classified and which are
 incorrectly.</p>
 <pre class="r"><code># confusion matrix

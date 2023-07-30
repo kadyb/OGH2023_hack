@@ -20,8 +20,8 @@ set.seed(1) # define seed of randomness
 
 Let's start by listing the rasters to be loaded from the `Landast_crop` folder.
 We also need to define the file extension `pattern = "\\.TIF$"` and full paths
-`full.names = TRUE` in `list.files()` function. Then we load these files using
-the `rast()` function.
+`full.names = TRUE` in the `list.files()` function. Then we load these files
+using the `rast()` function.
 
 ```{r}
 landsat_f = list.files("Landast_crop/", pattern = "\\.TIF$", full.names = TRUE)
@@ -207,7 +207,7 @@ head(validation_pr)
 Now we need to calculate the model performance metrics -- there are more than
 a [dozen](https://en.wikipedia.org/wiki/Precision_and_recall) of them.
 The simplest is accuracy, which is the ratio of correct classifications to
-all classifications (correct and incorrect), but in our case it will
+all classifications (correct and incorrect), but in our case it will be
 [unreliable](https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data)
 because our dataset is unbalanced. A better alternative would be balanced 
 accuracy or [Cohen's kappa](https://en.wikipedia.org/wiki/Cohen%27s_kappa).
@@ -223,7 +223,7 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 kap_vec(validation_smp$category, validation_pr)
 ```
 
-Moreover, we can do a more thorough analysis using
+Moreover, we can do a more thorough analysis using the
 [confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix) and see
 which classes are correctly classified and which are incorrectly.
 

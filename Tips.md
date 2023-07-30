@@ -6,7 +6,7 @@
 4. [Feature engineering](https://en.wikipedia.org/wiki/Feature_engineering) including:
     * Clustering
     * Tasseled cap transformation
-    * [Spectral indecies](https://www.indexdatabase.de)
+    * [Spectral indices](https://www.indexdatabase.de)
     * Textural features (e.g. [SAGA GIS](https://saga-gis.sourceforge.io/saga_tool_doc/9.1.1/imagery_tools_11.html))
     * Reduce spatial resolution
 5. Additional features:
