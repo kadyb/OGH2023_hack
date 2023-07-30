@@ -1,11 +1,12 @@
 # Hackathon rules
 
 1. You can submit the results individually or in pairs
-2. Finally, you must send the results as a `.csv` file and a reproducible notebook
-3. Notebooks will be available to the public after the hackathon (??????)
-4. Three submissions per day are allowed
-5. Three notebooks with the highest validation metric are subject to final evaluation. The best work is selected by the jury
-6. Don't waste time on tuning the model by 0.00001 score, focus more on feature engineering
+2. You must register with [kaggle](https://www.kaggle.com/)
+3. Finally, you must send the results as a `.csv` file and a reproducible notebook
+4. Notebooks will be available to the public after the hackathon (??????)
+5. Three submissions per day are allowed
+6. Three notebooks with the highest validation metric are subject to final evaluation. The best work is selected by the jury
+7. Don't waste time on tuning the model by 0.00001 score, focus more on feature engineering
 
 
 ## Notes
