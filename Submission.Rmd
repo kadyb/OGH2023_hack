@@ -4,7 +4,9 @@ author: "Krzysztof Dyba"
 date: "28 August 2023"
 output:
   html_document:
-    df_print: paged
+    toc: yes
+    toc_float: true
+    css: "style.css"
 ---
 
 ## Data loading
@@ -158,22 +160,59 @@ validation_smp = cbind(x, y)
 rm(x, y) # remove unnecessary variables
 ```
 
-XXXXXXXXXXXXXXXXXXXXX
+The key step is to train the classification model based on the training data.
+In this example, we will use the random forests from the **ranger** package
+and the default hyperparameters. As the first argument of the function, we must
+indicate the classification formula, i.e. indicate which variable is explained
+(dependent) and which are explanatory (independent). Our model should classify
+land cover categories according to spectral bands (B1 - B7).
+
+```
+category ~ B1 + B2 + B3 + B4 + B5 + B6 + B7
+```
+
+The above notation can be simplified by using a dot instead of the names of
+explanatory variables.
 
 ```{r}
+# ranger uses all threads by default
 mdl = ranger(category ~ ., data = train_smp, importance = "impurity")
 ```
 
+Using the `importance` argument (and later function), we can examine the
+importance of variables, i.e. indicate which spectral bands are most useful
+for classification and which are less important.
+
 ```{r}
-barplot(sort(importance(mdl)), xlab = "Spectral band",
-        main = "Variable importance")
+barplot(sort(importance(mdl)), xlab = "Spectral band", main = "Variable importance")
 ```
 
 ## Model evaluation
 
-```{r collapse=TRUE}
-validation_pr = predict(mdl, validation_smp[, -1])$predictions
+After the model is trained, its performance should be checked on an independent
+dataset, i.e. one that was not used for training. There are many ways to
+[validate](https://en.wikipedia.org/wiki/Cross-validation_(statistics)), but
+in this example we will use the holdout method (`validation_smp` data).
 
+We use the `predict()` function to make a prediction on a new dataset for
+which we know the actual land cover categories (of course, they should be
+removed in the prediction).
+
+```{r}
+validation_pr = predict(mdl, validation_smp[, -1])
+validation_pr = validation_pr$predictions # select predictions only
+head(validation_pr)
+```
+
+Now we need to calculate the model performance metrics -- there are more than
+a [dozen](https://en.wikipedia.org/wiki/Precision_and_recall) of them.
+The simplest is accuracy, which is the ratio of correct classifications to
+all classifications (correct and incorrect), but in our case it will
+[unreliable](https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data)
+because our dataset is unbalanced. A better alternative would be balanced 
+accuracy or [Cohen's kappa](https://en.wikipedia.org/wiki/Cohen%27s_kappa).
+
+```{r collapse=TRUE}
 # accuracy is over optimistic (don't use this)
 accuracy_vec(validation_smp$category, validation_pr)
 
@@ -184,22 +223,37 @@ bal_accuracy_vec(validation_smp$category, validation_pr)
 kap_vec(validation_smp$category, validation_pr)
 ```
 
+Moreover, we can do a more thorough analysis using
+[confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix) and see
+which classes are correctly classified and which are incorrectly.
+
 ```{r}
 # confusion matrix
 table(prediction = validation_pr, true = validation_smp$category)
 ```
 
-## Predict
+## Submission
+
+Finally, we need to make a prediction for the `submission` object.
+We can crop the satellite scene to the extent of the point layer
+(or alternatively select only the necessary pixels). Note, don't use more
+than 1 core in the `predict()` function, because the `ranger` model uses
+all threads by default.
 
 ```{r results="hide"}
 landsat_pr = crop(landsat, ext(submission))
 landsat_pr = predict(landsat_pr, mdl, index = 1, na.rm = TRUE, cores = 1)
 ```
 
+Using the `levels()` function, we can assign categories to IDs.
+
 ```{r}
 levels(landsat_pr) = levels(training)
 plot(landsat_pr, main = "Prediction", col = colors)
 ```
+
+The final step is to extract the land cover categories for the given coordinates
+and save the result to a `.csv` file.
 
 ```{r}
 pts_pr = extract(landsat_pr, submission, ID = FALSE)
