@@ -19,3 +19,5 @@
   * wszyscy zainteresowani, ale tylko uczestnicy letniej szkoły otrzymają certyfikaty, a najlepsi nagrody
 
 2. Jakie nagrody? Może Jakub i Edzer mogą sprezentować książki?
+
+3. Czy notebooki z rozwiązaniami powinny być dostępne publicznie po zakończeniu konkursu?
