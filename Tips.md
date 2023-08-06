@@ -7,13 +7,13 @@
     * Clustering
     * Tasseled cap transformation
     * [Spectral indices](https://www.indexdatabase.de)
-    * Textural features (e.g. [SAGA GIS](https://saga-gis.sourceforge.io/saga_tool_doc/9.1.1/imagery_tools_11.html))
-    * Reduce spatial resolution
+    * Using textural features (e.g. [SAGA GIS](https://saga-gis.sourceforge.io/saga_tool_doc/9.1.1/imagery_tools_11.html))
+    * Reducing spatial resolution
 5. Additional features:
-   * Rada data from Sentinel 1
+   * Radar data from Sentinel 1
    * Normalized digital surface model (nDSM)
    * Panchromatic band (15 m)
-   * Satellite scene from another date
+   * Satellite scene from another date(s)
 6. Post-processing:
     * Modal filter
     * Sieve filter

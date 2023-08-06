@@ -15,11 +15,11 @@ output:
 library("terra")
 library("ranger") # Random Forest model
 library("yardstick") # validation metrics
-set.seed(1) # define seed of randomness
+set.seed(1) # define a random seed
 ```
 
 Let's start by listing the rasters to be loaded from the `Landast_crop` folder.
-We also need to define the file extension `pattern = "\\.TIF$"` and full paths
+We need to define the file extension `pattern = "\\.TIF$"` and full paths
 `full.names = TRUE` in the `list.files()` function. Then we load these files
 using the `rast()` function.
 
@@ -54,7 +54,7 @@ using the `stretch` argument.
 plotRGB(landsat, r = 4, g = 3, b = 2, stretch = "lin")
 ```
 
-Now let's load our reference data with land cover categories. We have two
+Now, let's load our reference data with land cover categories. We have two
 datasets -- a training (to train the classification model) and a validation
 (to independently evaluate its performance).
 
@@ -106,7 +106,7 @@ head(submission)
 
 The first two columns contain the geographical coordinates of points in the
 EPSG:2180 (longitude and latitude). The third column `category` is empty and
-we have to indicate what land cover category is there.
+we have to indicate predicted land cover category.
 
 Then let's convert the data frame to a vector (SpatVector) and reproject
 the coordinate reference systems to EPSG:32634.
@@ -119,18 +119,18 @@ submission = project(submission, crs(landsat))
 ## Model training
 
 To train the model, we do not have to use all available data (pixels), we can
-use a random sample, which will significantly speed up training.
-The `spatSample()` function is used to draw the sample and can be done as follows.
+use their random sample, which will significantly speed up training.
+The `spatSample()` function is used to draw the sample below.
 
 ```{r}
 train_smp = spatSample(training, size = 20000, method = "random",
                        as.points = TRUE, values = FALSE, na.rm = TRUE)
 ```
 
-We have already sample the points (coordinates), now we need to obtain the
+Now we have sample the points (coordinates), so we need to obtain the
 values of spectral bands (`landsat`) and land cover categories (`training`
 and `validation`). The `extract()` function is used to extract pixel values.
-Remember that the objects must have identical CRS.
+Remember that all objects must have identical CRS.
 
 ```{r}
 x = extract(training, train_smp, ID = FALSE)
@@ -145,7 +145,7 @@ Let's check what the data distribution looks like using the `table()` and
 prop.table(table(train_smp$category)) * 100
 ```
 
-As we can see, our dataset is strongly unbalanced, i.e. the most pixels
+As we can see, our dataset is strongly unbalanced, i.e., the most pixels
 represent `cropland` and `vegetation`, and the other categories appear very
 rarely.
 
@@ -162,8 +162,8 @@ rm(x, y) # remove unnecessary variables
 
 The key step is to train the classification model based on the training data.
 In this example, we will use the random forests from the **ranger** package
-and the default hyperparameters. As the first argument of the function, we must
-indicate the classification formula, i.e. indicate which variable is explained
+and its default hyperparameters. As the first argument of the function, we must
+indicate the classification formula, i.e., indicate which variable is explained
 (dependent) and which are explanatory (independent). Our model should classify
 land cover categories according to spectral bands (B1 - B7).
 
@@ -190,13 +190,13 @@ barplot(sort(importance(mdl)), xlab = "Spectral band", main = "Variable importan
 ## Model evaluation
 
 After the model is trained, its performance should be checked on an independent
-dataset, i.e. one that was not used for training. There are many ways to
+dataset, i.e., one that was not used for training. There are many ways to
 [validate](https://en.wikipedia.org/wiki/Cross-validation_(statistics)), but
 in this example we will use the holdout method (`validation_smp` data).
 
 We use the `predict()` function to make a prediction on a new dataset for
 which we know the actual land cover categories (of course, they should be
-removed in the prediction).
+removed from the prediction).
 
 ```{r}
 validation_pr = predict(mdl, validation_smp[, -1])
@@ -204,8 +204,7 @@ validation_pr = validation_pr$predictions # select predictions only
 head(validation_pr)
 ```
 
-Now we need to calculate the model performance metrics -- there are more than
-a [dozen](https://en.wikipedia.org/wiki/Precision_and_recall) of them.
+Now we need to calculate the model performance metrics -- there are [many of them](https://en.wikipedia.org/wiki/Precision_and_recall) of them.
 The simplest is accuracy, which is the ratio of correct classifications to
 all classifications (correct and incorrect), but in our case it will be
 [unreliable](https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data)
@@ -236,7 +235,7 @@ table(prediction = validation_pr, true = validation_smp$category)
 
 Finally, we need to make a prediction for the `submission` object.
 We can crop the satellite scene to the extent of the point layer
-(or alternatively select only the necessary pixels). Note, don't use more
+(or alternatively select only the necessary pixels). Note: do not use more
 than 1 core in the `predict()` function, because the `ranger` model uses
 all threads by default.
 
