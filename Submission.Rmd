@@ -204,7 +204,7 @@ validation_pr = validation_pr$predictions # select predictions only
 head(validation_pr)
 ```
 
-Now we need to calculate the model performance metrics -- there are [many of them](https://en.wikipedia.org/wiki/Precision_and_recall) of them.
+Now we need to calculate the model performance metrics -- there are [many of them](https://en.wikipedia.org/wiki/Precision_and_recall).
 The simplest is accuracy, which is the ratio of correct classifications to
 all classifications (correct and incorrect), but in our case it will be
 [unreliable](https://en.wikipedia.org/wiki/Precision_and_recall#Imbalanced_data)
