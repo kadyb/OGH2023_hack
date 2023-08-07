@@ -1,7 +1,7 @@
 # Hackathon rules
 
 1. You can submit the results individually or in pairs
-2. You must registered on [Kaggle](https://www.kaggle.com/)
+2. You must be registered on [Kaggle](https://www.kaggle.com/)
 3. Finally, you must send the results as a `.csv` file and a reproducible notebook
 4. Notebooks will be available to the public after the hackathon (??????)
 5. Maximum of three submissions per day are allowed
