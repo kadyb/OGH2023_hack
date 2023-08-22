@@ -3,7 +3,7 @@
 1. You can submit the results individually or in pairs
 2. You must be registered on [Kaggle](https://www.kaggle.com/)
 3. Finally, you must send the results as a `.csv` file and a reproducible notebook
-4. *Notebooks will be available to the public after the hackathon (??????)*
+4. If you agree, we can make your notebook public in the hackathon repository
 5. Maximum of three submissions per day are allowed
 6. Three notebooks with the highest validation metric are subject to final evaluation. The best work is selected by the jury
 
@@ -19,3 +19,4 @@
     * gradient boosting
     * support vector machine
 5. Do not waste time on tuning the model that improves the score by 0.00001; focus more on feature engineering
+6. If you have any questions (or problem) about the hackathon, feel free to ask on the [hackathon](https://mattermost.opengeohub.org/poznan-2023/channels/hackathons) channel on Mattermost
