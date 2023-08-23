@@ -1,4 +1,4 @@
-# OGH2023_hack
+# Hackathon "Automatic land cover mapping"
 
 [Presentation](https://kadyb.github.io/OGH2023_hack/Presentation.pdf)
 
@@ -12,4 +12,3 @@
 
 1. Upload datasets Google Drive and Zenodo
 2. Create competition on kaggle
-3. Make short presentation
