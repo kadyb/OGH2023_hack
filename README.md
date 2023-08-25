@@ -2,13 +2,10 @@
 
 [Presentation](https://kadyb.github.io/OGH2023_hack/Presentation.pdf)
 
-[Submission](https://kadyb.github.io/OGH2023_hack/Submission.html)
+[Tutorial](https://kadyb.github.io/OGH2023_hack/Submission.html)
 
 [Tips](https://kadyb.github.io/OGH2023_hack/Tips)
 
 [Rules](https://kadyb.github.io/OGH2023_hack/Rules)
 
-## TODO
-
-1. Upload datasets Google Drive and Zenodo
-2. Create competition on kaggle
+[**Kaggle**](https://www.kaggle.com/t/87b91a8de46e42f18af5d86073683dc4)
