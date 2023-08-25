@@ -8,4 +8,6 @@
 
 [Rules](https://kadyb.github.io/OGH2023_hack/Rules)
 
-[**Kaggle**](https://www.kaggle.com/t/87b91a8de46e42f18af5d86073683dc4)
+[**Kaggle**](https://www.kaggle.com/t/87b91a8de46e42f18af5d86073683dc4):
+  * [Dataset](https://www.kaggle.com/competitions/ogh2023/data)
+  * [Submission](https://www.kaggle.com/competitions/ogh2023/submissions)
