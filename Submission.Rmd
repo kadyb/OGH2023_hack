@@ -24,7 +24,7 @@ We need to define the file extension `pattern = "\\.TIF$"` and full paths
 using the `rast()` function.
 
 ```{r}
-landsat_f = list.files("Landast_crop/", pattern = "\\.TIF$", full.names = TRUE)
+landsat_f = list.files("Landast", pattern = "\\.TIF$", full.names = TRUE)
 landsat_f = landsat_f[-1] # remove panchromatic band (15 m)
 landsat = rast(landsat_f)
 ```
@@ -255,6 +255,6 @@ The final step is to extract the land cover categories for the given coordinates
 and save the result to a `.csv` file.
 
 ```{r}
-pts_pr = extract(landsat_pr, submission, ID = FALSE)
+pts_pr = extract(landsat_pr, submission)
 write.csv(pts_pr, "test_submission.csv", row.names = FALSE)
 ```
