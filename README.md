@@ -1,5 +1,14 @@
 # Hackathon "Automatic land cover mapping"
 
+
+**The hackathon is finished.
+The winner is [Maarten Pronk](https://github.com/evetion).
+Congratulations!
+You can find his notebook in the *solutions* folder.
+The final ranking is available on Kaggle.**
+
+-----------------------------
+
 [Presentation](https://kadyb.github.io/OGH2023_hack/Presentation.pdf)
 
 [Tutorial](https://kadyb.github.io/OGH2023_hack/Submission.html)
